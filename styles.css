@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Geist Mono", monospace;
+  background-color: #fafafa;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.export-btn {
+  opacity: 0.3;
+  background: none;
+  border: none;
+  color: #6b7280;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  transition: opacity 0.2s;
+}
+
+.export-btn:hover {
+  opacity: 0.7;
+  color: #374151;
+}
+
+.date {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.main {
+  flex: 1;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+#notepad {
+  width: 50%;
+  height: 100%;
+  resize: none;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1f2937;
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: "Geist Mono", monospace;
+  min-height: calc(100vh - 120px);
+}
+
+#notepad::placeholder {
+  color: #cbd5e1;
+}
+
+.footer {
+  padding: 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.char-count {
+  font-size: 12px;
+  color: #9ca3af;
+}
