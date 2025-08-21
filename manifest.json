@@ -10,8 +10,8 @@
     "storage"
   ],
   "icons": {
-    "16": "placeholder-logo.png",
-    "48": "placeholder-logo.png",
-    "128": "placeholder-logo.png"
+    "16": "public/placeholder-logo.png",
+    "48": "public/placeholder-logo.png",
+    "128": "public/placeholder-logo.png"
   }
 }
