@@ -1,13 +1,38 @@
-import fs from "fs/promises"
-import path from "path"
-import { fileURLToPath } from "url"
+const fs = require("fs/promises")
+const path = require("path")
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 const projectRoot = path.join(__dirname, "..")
+
+async function bumpVersion() {
+  console.log("📈 Bumping version number...")
+  
+  const manifestPath = path.join(projectRoot, "manifest.json")
+  const manifestContent = await fs.readFile(manifestPath, "utf8")
+  const manifest = JSON.parse(manifestContent)
+  
+  // Parse current version (e.g., "1.0" -> [1, 0])
+  const versionParts = manifest.version.split(".").map(Number)
+  const [major, minor, patch = 0] = versionParts
+  
+  // Bump minor version
+  const newMinor = minor + 1
+  const newVersion = `${major}.${newMinor}`
+  
+  // Update manifest
+  manifest.version = newVersion
+  
+  // Write back to manifest.json
+  await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2))
+  
+  console.log(`✅ Version bumped from ${versionParts.join(".")} to ${newVersion}`)
+  return newVersion
+}
 
 async function buildExtension() {
   console.log("🔨 Building Chrome Extension...")
+
+  // Bump version first
+  const newVersion = await bumpVersion()
 
   const buildDir = path.join(projectRoot, "chrome-extension-build")
 
@@ -21,7 +46,14 @@ async function buildExtension() {
   await fs.mkdir(buildDir, { recursive: true })
 
   // Files to copy for the Chrome extension
-  const filesToCopy = ["manifest.json", "index.html", "styles.css", "script.js"]
+  const filesToCopy = [
+    "manifest.json", 
+    "index.html", 
+    "styles.css", 
+    "script.js",
+    "public/placeholder-logo.png",
+    "public/placeholder-logo.svg"
+  ]
 
   // Copy each file
   for (const file of filesToCopy) {
@@ -36,7 +68,22 @@ async function buildExtension() {
     }
   }
 
+  // Copy icon files from public directory
+  const iconFiles = ["placeholder-logo.png", "placeholder-logo.svg"]
+  for (const iconFile of iconFiles) {
+    const sourcePath = path.join(projectRoot, "public", iconFile)
+    const destPath = path.join(buildDir, iconFile)
+
+    try {
+      await fs.copyFile(sourcePath, destPath)
+      console.log(`✅ Copied icon: ${iconFile}`)
+    } catch (error) {
+      console.error(`❌ Failed to copy icon ${iconFile}:`, error.message)
+    }
+  }
+
   console.log(`\n🎉 Chrome Extension built successfully!`)
+  console.log(`📦 Version: ${newVersion}`)
   console.log(`📁 Extension files are in: ${buildDir}`)
   console.log(`\n📋 To install:`)
   console.log(`1. Open Chrome and go to chrome://extensions/`)

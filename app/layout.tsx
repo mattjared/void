@@ -5,8 +5,8 @@ import { GeistMono } from "geist/font/mono"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Papier - Notes",
-  description: "A simple note-taking app inspired by Papier Chrome Extension",
+  title: "Matt Jared - Void",
+  description: "Matt Jared's Void",
   generator: "v0.dev",
 }
 
