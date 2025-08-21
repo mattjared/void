@@ -50,9 +50,7 @@ async function buildExtension() {
     "manifest.json", 
     "index.html", 
     "styles.css", 
-    "script.js",
-    "public/placeholder-logo.png",
-    "public/placeholder-logo.svg"
+    "script.js"
   ]
 
   // Copy each file
@@ -81,6 +79,22 @@ async function buildExtension() {
       console.error(`❌ Failed to copy icon ${iconFile}:`, error.message)
     }
   }
+
+  // Fix icon paths in the copied manifest.json
+  const buildManifestPath = path.join(buildDir, "manifest.json")
+  const buildManifestContent = await fs.readFile(buildManifestPath, "utf8")
+  const buildManifest = JSON.parse(buildManifestContent)
+  
+  // Update icon paths to remove "public/" prefix
+  if (buildManifest.icons) {
+    for (const size in buildManifest.icons) {
+      buildManifest.icons[size] = buildManifest.icons[size].replace(/^public\//, "")
+    }
+  }
+  
+  // Write the corrected manifest back
+  await fs.writeFile(buildManifestPath, JSON.stringify(buildManifest, null, 2))
+  console.log(`✅ Fixed icon paths in manifest.json`)
 
   console.log(`\n🎉 Chrome Extension built successfully!`)
   console.log(`📦 Version: ${newVersion}`)
