@@ -1,9 +1,6 @@
-import fs from "fs/promises"
-import path from "path"
-import { fileURLToPath } from "url"
+const fs = require("fs/promises")
+const path = require("path")
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 const projectRoot = path.join(__dirname, "..")
 
 async function buildExtension() {
@@ -20,7 +17,6 @@ async function buildExtension() {
 
   await fs.mkdir(buildDir, { recursive: true })
 
-  // Files to copy for the Chrome extension
   const filesToCopy = ["manifest.json", "index.html", "styles.css", "script.js"]
 
   // Copy each file
