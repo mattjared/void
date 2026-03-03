@@ -1,3 +1,33 @@
+// Storage abstraction — uses chrome.storage when available, falls back to localStorage
+const voidStorage = {
+  get(keys, callback) {
+    if (typeof chrome !== "undefined" && chrome.storage?.local) {
+      chrome.storage.local.get(keys, callback)
+    } else {
+      const result = {}
+      keys.forEach((key) => {
+        const val = localStorage.getItem(key)
+        if (val !== null) result[key] = val
+      })
+      callback(result)
+    }
+  },
+  set(items) {
+    if (typeof chrome !== "undefined" && chrome.storage?.local) {
+      chrome.storage.local.set(items)
+    } else {
+      Object.entries(items).forEach(([key, val]) => localStorage.setItem(key, val))
+    }
+  },
+  remove(keys) {
+    if (typeof chrome !== "undefined" && chrome.storage?.local) {
+      chrome.storage.local.remove(keys)
+    } else {
+      keys.forEach((key) => localStorage.removeItem(key))
+    }
+  },
+}
+
 class VoidExtension {
   constructor() {
     this.notepad = document.getElementById("notepad")
@@ -32,7 +62,7 @@ class VoidExtension {
   }
 
   loadNotes() {
-    window.chrome.storage.local.get(["voidNotes"], (result) => {
+    voidStorage.get(["voidNotes"], (result) => {
       if (result.voidNotes) {
         this.notepad.value = result.voidNotes
         this.updateCharCount()
@@ -43,7 +73,7 @@ class VoidExtension {
 
   saveNotes() {
     const text = this.notepad.value
-    window.chrome.storage.local.set({ voidNotes: text })
+    voidStorage.set({ voidNotes: text })
     this.updateCharCount()
     this.toggleExportButton()
   }
@@ -99,16 +129,14 @@ class VoidExtension {
 
     window.open(obsidianUri, "_blank")
 
-    // Clear the notes
     this.notepad.value = ""
-    window.chrome.storage.local.remove(["voidNotes"])
+    voidStorage.remove(["voidNotes"])
     this.updateCharCount()
     this.toggleExportButton()
     this.notepad.focus()
   }
 }
 
-// Initialize the extension when the page loads
 document.addEventListener("DOMContentLoaded", () => {
   new VoidExtension()
 })
